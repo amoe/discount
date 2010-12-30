@@ -2,7 +2,8 @@
 
 (library (discount)
   (export mkd-in
-          markdown)
+          markdown
+          mkd-string)
   (import (rnrs)
           (mosh ffi))
 
@@ -10,6 +11,7 @@
 (define lib (open-shared-library "libmarkdown.so"))
 
 (define mkd-in (c-function lib void* mkd_in void* int))
+(define mkd-string (c-function lib void* mkd_string char* int int))
 (define markdown (c-function lib int markdown void* void* int))
 
 )
