@@ -1,5 +1,7 @@
 (import (rnrs)
         (mosh test)
-        (discount))
+        (discount)
+        (stdio))
 
+(test-true mkd-in)
 (test-results)

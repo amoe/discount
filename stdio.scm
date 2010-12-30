@@ -1,6 +1,6 @@
 #!r6rs
 
-(library (ffi-streams)
+(library (stdio)
   (export fopen
           fclose)
   (import (rnrs) (mosh ffi))
