@@ -26,4 +26,11 @@
 
   (fclose out-stream))
 
+(let ((out-stream (tmpfile))
+      (test-size (string-length *test-string*)))
+  (let ((mmiot (mkd-string *test-string* test-size 0)))
+    (test-true mmiot)
+    (let ((ret (mkd-compile mmiot 0)))
+      (test-equal 0 ret))))
+
 (test-results)
