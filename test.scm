@@ -3,5 +3,7 @@
         (discount)
         (stdio))
 
-(test-true mkd-in)
+(let ((stream (tmpfile)))
+  (rewind stream)
+  (test-true stream))
 (test-results)
