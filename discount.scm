@@ -1,7 +1,8 @@
 #!r6rs
 
 (library (discount)
-  (export mkd-in)
+  (export mkd-in
+          markdown)
   (import (rnrs)
           (mosh ffi))
 
@@ -9,5 +10,7 @@
 (define lib (open-shared-library "libmarkdown.so"))
 
 (define mkd-in (c-function lib void* mkd_in void* int))
+(define markdown (c-function lib int markdown void* void* int))
 
 )
+ 
