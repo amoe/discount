@@ -1,9 +1,13 @@
 (import (rnrs)
         (mosh test)
+        (mosh ffi)
         (discount)
         (stdio))
 
-(define *test-string* "hello world")
+(define *style-header* "<style> ul { display: none; } </style>\n")
+(define *body* "hello world")
+(define *test-string* (string-append *style-header* *body*))
+(define *test-size*   (string-length *test-string*))
 
 (let ((in-stream (tmpfile))
       (out-stream (tmpfile)))
@@ -31,6 +35,25 @@
   (let ((mmiot (mkd-string *test-string* test-size 0)))
     (test-true mmiot)
     (let ((ret (mkd-compile mmiot 0)))
-      (test-equal 0 ret))))
+      (test-equal 0 ret))))    ; This test will always fail due to a bug in
+                               ; discount (or the docs).
+
+(define (extract-string ptr size)
+  (list->string
+   (let loop ((n 0))
+     (if (>= n size)
+         '()
+         (cons (integer->char (pointer-ref-c-signed-char ptr n))
+               (loop (+ n 1)))))))
+
+(let ((mmiot (mkd-string *test-string* *test-size* 0)))
+  (mkd-compile mmiot 0)
+  (let ((ptr (malloc size-of-pointer)))
+    (let ((size (mkd-css mmiot ptr)))
+      (let ((real-ptr (pointer-ref-c-pointer ptr 0)))
+        (test-equal *style-header* (extract-string real-ptr size))))))
+
+        
+
 
 (test-results)
