@@ -5,7 +5,8 @@
           markdown
           mkd-string
           mkd-compile
-          mkd-css)
+          mkd-css
+          mkd-generatecss)
   (import (rnrs)
           (mosh ffi))
 
@@ -17,6 +18,7 @@
 (define markdown (c-function lib int markdown void* void* int))
 (define mkd-compile (c-function lib int mkd_compile void* int))
 (define mkd-css (c-function lib int mkd_css void* void*))
+(define mkd-generatecss (c-function lib int mkd_generatecss void* void*))
 
 )
  

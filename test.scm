@@ -54,6 +54,12 @@
         (test-equal *style-header* (extract-string real-ptr size))))))
 
         
-
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (mkd-compile mmiot 0)
+  (test-false   ; makeshift "does not throw exception"
+    (begin
+      (mkd-generatecss mmiot out-stream)
+      #f)))
 
 (test-results)
