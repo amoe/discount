@@ -126,7 +126,7 @@
   (mkd-compile mmiot *toc*)
   (test-true   ; makeshift "does not throw exception"
     (begin
-      (mkd-generatetoc mmiot  out-stream)
+      (mkd-generatetoc mmiot out-stream)
       #t)))
 
 ; Can't make any tests on the return value of mkd_cleanup(), as it returns
@@ -149,6 +149,21 @@
     (test-equal *pandoc-title* title)
     (test-equal *pandoc-date* date)
     (test-equal *pandoc-author* author)))
+
+(let ((ptr (malloc size-of-pointer)))
+  (let ((size (mkd-line *body* (string-length *body*) ptr 0)))
+    (let ((real-ptr (pointer-ref-c-pointer ptr 0)))
+      (let ((ret (extract-string real-ptr size)))
+        (test-true (>= size (string-length *body*)))))))
+
+(let ((out-stream (tmpfile)))
+  (test-true   ; makeshift "does not throw exception"
+    (begin
+      (mkd-generateline *body*
+                        (string-length *body*)
+                        out-stream
+                        0)
+      #t)))
 
 (test-results)
 

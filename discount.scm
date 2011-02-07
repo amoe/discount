@@ -16,6 +16,8 @@
           mkd-doc-title
           mkd-doc-author
           mkd-doc-date
+          mkd-line
+          mkd-generateline
 
           ; preprocessor constants
           *nolinks*
@@ -46,9 +48,12 @@
 ; FIXME: filename should be determined by libtool / configure.ac
 (define lib (open-shared-library "libmarkdown.so"))
 
+; top-level functions from markdown(3)
 (define mkd-in (c-function lib void* mkd_in void* int))
 (define mkd-string (c-function lib void* mkd_string char* int int))
 (define markdown (c-function lib int markdown void* void* int))
+
+; miscellaneous functions from mkd-functions(3)
 (define mkd-compile (c-function lib int mkd_compile void* int))
 (define mkd-css (c-function lib int mkd_css void* void*))
 (define mkd-generatecss (c-function lib int mkd_generatecss void* void*))
@@ -61,6 +66,11 @@
 (define mkd-doc-title (c-function lib char* mkd_doc_title void*))
 (define mkd-doc-author (c-function lib char* mkd_doc_author void*))
 (define mkd-doc-date (c-function lib char* mkd_doc_date void*))
+
+; line based functions from mkd-line(3)
+(define mkd-line (c-function lib int mkd_line char* int void* int))
+(define mkd-generateline
+  (c-function lib int mkd_generateline char* int void* int))
 
 (define *nolinks* 1)
 (define *noimage* 2)
