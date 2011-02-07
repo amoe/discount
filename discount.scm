@@ -11,6 +11,8 @@
           mkd-generatehtml
           mkd-xhtmlpage
           mkd-toc
+          mkd-generatetoc
+          mkd-cleanup
 
           ; preprocessor constants
           *nolinks*
@@ -51,6 +53,8 @@
 (define mkd-generatehtml (c-function lib int mkd_generatehtml void* void*))
 (define mkd-xhtmlpage (c-function lib int mkd_xhtmlpage void* int void*))
 (define mkd-toc (c-function lib int mkd_toc void* void*))
+(define mkd-generatetoc (c-function lib int mkd_generatetoc void* void*))
+(define mkd-cleanup (c-function lib void mkd_cleanup void*))
 
 (define *nolinks* 1)
 (define *noimage* 2)

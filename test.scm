@@ -107,4 +107,22 @@
           (test-true (srfi-13:string-contains ret *heading-text*))
           (test-true (>= size (string-length *heading-text*))))))))
 
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (mkd-compile mmiot *toc*)
+  (test-true   ; makeshift "does not throw exception"
+    (begin
+      (mkd-generatetoc mmiot  out-stream)
+      #t)))
+
+; Can't make any tests on the return value of mkd_cleanup(), as it returns
+; #<unspecified> and we can't compare two of these values.
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (mkd-compile mmiot 0)
+  (test-true
+   (begin
+     (mkd-cleanup mmiot)
+     #t)))
+
 (test-results)
