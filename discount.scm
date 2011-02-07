@@ -13,6 +13,9 @@
           mkd-toc
           mkd-generatetoc
           mkd-cleanup
+          mkd-doc-title
+          mkd-doc-author
+          mkd-doc-date
 
           ; preprocessor constants
           *nolinks*
@@ -55,6 +58,9 @@
 (define mkd-toc (c-function lib int mkd_toc void* void*))
 (define mkd-generatetoc (c-function lib int mkd_generatetoc void* void*))
 (define mkd-cleanup (c-function lib void mkd_cleanup void*))
+(define mkd-doc-title (c-function lib char* mkd_doc_title void*))
+(define mkd-doc-author (c-function lib char* mkd_doc_author void*))
+(define mkd-doc-date (c-function lib char* mkd_doc_date void*))
 
 (define *nolinks* 1)
 (define *noimage* 2)

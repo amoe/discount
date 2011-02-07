@@ -6,16 +6,30 @@
         (discount)
         (stdio))
 
+(define *pandoc-title* "A Modest Proposal")
+(define *pandoc-author* "David Banks")
+(define *pandoc-date* "2011-02-07")
+(define *pandoc-header*
+  (format "% ~a\n% ~a\n% ~a\n" *pandoc-title* *pandoc-author* *pandoc-date*))
+
 (define *style-header* "<style> ul { display: none; } </style>\n")
 (define *heading-text* "HEADING")
 (define *heading-markup* "\n--------\n")
 (define *body* "hello world")
 (define *test-string*
-  (string-append *style-header*
+  (string-append *style-header*   ; style header must be first, and having one
+                                  ; precludes using a pandoc header also.
                  *heading-text*
                  *heading-markup*
                  *body*))
 (define *test-size*   (string-length *test-string*))
+
+(define *pandoc-test*
+  (string-append *pandoc-header*   ; style header must be first, and having one
+                                   ; precludes using a pandoc header also.
+                 *heading-text*
+                 *heading-markup*
+                 *body*))
 
 (let ((in-stream (tmpfile))
       (out-stream (tmpfile)))
@@ -125,4 +139,16 @@
      (mkd-cleanup mmiot)
      #t)))
 
+(let ((mmiot (mkd-string *pandoc-header*
+                         (string-length *pandoc-header*)
+                         0)))
+  (mkd-compile mmiot 0)
+  (let ((title (mkd-doc-title mmiot))
+        (date (mkd-doc-date mmiot))
+        (author (mkd-doc-author mmiot)))
+    (test-equal *pandoc-title* title)
+    (test-equal *pandoc-date* date)
+    (test-equal *pandoc-author* author)))
+
 (test-results)
+
