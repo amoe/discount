@@ -18,6 +18,10 @@
           mkd-doc-date
           mkd-line
           mkd-generateline
+          mkd-e-url
+          mkd-e-flags
+          mkd-e-free
+          mkd-e-data
 
           ; preprocessor constants
           *nolinks*
@@ -71,6 +75,12 @@
 (define mkd-line (c-function lib int mkd_line char* int void* int))
 (define mkd-generateline
   (c-function lib int mkd_generateline char* int void* int))
+
+; callback functions from mkd-callbacks(3)
+(define mkd-e-url (c-function lib void mkd_e_url void* callback))
+(define mkd-e-flags (c-function lib void mkd_e_flags void* callback))
+(define mkd-e-free (c-function lib void mkd_e_free void* callback))
+(define mkd-e-data (c-function lib void mkd_e_data void* void*))
 
 (define *nolinks* 1)
 (define *noimage* 2)

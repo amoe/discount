@@ -16,12 +16,14 @@
 (define *heading-text* "HEADING")
 (define *heading-markup* "\n--------\n")
 (define *body* "hello world")
+(define *markup* "\nHere <http://www.example.com/>\n")
 (define *test-string*
   (string-append *style-header*   ; style header must be first, and having one
                                   ; precludes using a pandoc header also.
                  *heading-text*
                  *heading-markup*
-                 *body*))
+                 *body*
+                 *markup*))
 (define *test-size*   (string-length *test-string*))
 
 (define *pandoc-test*
@@ -30,6 +32,8 @@
                  *heading-text*
                  *heading-markup*
                  *body*))
+
+(define *userdata-content* "something")
 
 (let ((in-stream (tmpfile))
       (out-stream (tmpfile)))
@@ -59,6 +63,16 @@
     (let ((ret (mkd-compile mmiot 0)))
       (test-equal 0 ret))))    ; This test will always fail due to a bug in
                                ; discount (or the docs).
+
+(define (allocate-string str)
+  (let ((ptr (malloc (string-length str))))
+    (let loop ((chars (string->list str)) (idx 0))
+      (cond
+       ((null? chars)  (pointer-set-c-char! ptr idx 0))
+       (else
+        (pointer-set-c-char! ptr idx (char->integer (car chars)))
+        (loop (cdr chars) (+ idx 1)))))
+    ptr))
 
 (define (extract-string ptr size)
   (list->string
@@ -164,6 +178,57 @@
                         out-stream
                         0)
       #t)))
+
+(define link-cb
+  ; Should be char* but not supported for some reason?
+  (c-callback void* (void* int void*)
+    (lambda (url size userdata)
+      (let ((real-url (extract-string url size)))
+        (test-true (srfi-13:string-contains *markup* real-url)))
+      url)))
+
+(define link-userdata-cb
+  ; Should be char* but not supported for some reason?
+  (c-callback void* (void* int void*)
+    (lambda (url size userdata)
+      (let ((real-userdata (extract-string userdata
+                                           (string-length *userdata-content*))))
+      (test-true
+       (string=? real-userdata *userdata-content*))))))
+              
+(define free-cb
+  ; Should be char* but not supported for some reason?
+  (c-callback void (void* void*)
+    (lambda (url userdata)
+      (test-true (pointer? url))
+      (test-true (pointer? userdata)))))
+
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (mkd-compile mmiot 0)
+  (mkd-e-url mmiot link-cb)
+  (mkd-generatehtml mmiot out-stream))
+
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (mkd-compile mmiot 0)
+  (mkd-e-flags mmiot link-cb)
+  (mkd-generatehtml mmiot out-stream))
+
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (mkd-compile mmiot 0)
+  (mkd-e-url mmiot link-cb)
+  (mkd-e-free mmiot free-cb)
+  (mkd-generatehtml mmiot out-stream))
+
+(let ((mmiot (mkd-string *test-string* *test-size* 0))
+      (out-stream (tmpfile)))
+  (let ((ptr (allocate-string *userdata-content*)))
+    (mkd-compile mmiot 0)
+    (mkd-e-url mmiot link-userdata-cb)
+    (mkd-e-data mmiot ptr)
+    (mkd-generatehtml mmiot out-stream)))
 
 (test-results)
 
