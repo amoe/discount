@@ -3,10 +3,12 @@
 (library (markdown)
   (export divide-list
           list->alist
+          process
           options)
   (import (rnrs)
           (util)
-          (discount))
+          (discount)
+          (mosh ffi))
 
   (define mapping
     (list->alist
@@ -32,8 +34,27 @@
      'no-alphabetic-lists *noalphalist*
      'no-definition-lists *nodlist*))
 
+  ; FIXME: Optimize.
+  (define (extract-string ptr size)
+    (list->string
+     (let loop ((n 0))
+       (if (>= n size)
+           '()
+           (cons (integer->char (pointer-ref-c-signed-char ptr n))
+                 (loop (+ n 1)))))))
+
   (define (options . args)
     (apply bitwise-ior
            (map (lambda (key) (lookup key mapping)) args)))
 
+  (define (process input . opt-list)
+    (let* ((flags (apply options opt-list))
+           (mmiot (mkd-string input
+                              (string-length input)
+                              flags)))
+      (mkd-compile mmiot flags)   ; FIXME: check return code
+      (let* ((text-ptr (malloc size-of-pointer))
+             (size (mkd-document mmiot text-ptr))
+             (real-ptr (pointer-ref-c-pointer text-ptr 0)))
+        (extract-string real-ptr size))))
 )
