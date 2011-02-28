@@ -245,5 +245,13 @@
               'process-tag-text
               'version-1-compat))
 
+(test-equal "<p>dude</p>"
+            (markdown:convert "dude"))
+
+(test-equal "<p><em>seriously</em>, dude</p>"
+            (markdown:convert "*seriously*, dude"))
+
+(test-true (pointer? (markdown:string->document *body*)))
+
 (test-results)
 

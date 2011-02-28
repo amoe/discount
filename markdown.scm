@@ -1,13 +1,15 @@
 #!r6rs
 
 (library (markdown)
-  (export divide-list
-          list->alist
-          process
-          options)
+  (export convert
+          options
+          string->document
+          path->document
+          convert-document)
   (import (rnrs)
           (util)
           (discount)
+          (stdio)
           (mosh ffi))
 
   (define mapping
@@ -47,14 +49,23 @@
     (apply bitwise-ior
            (map (lambda (key) (lookup key mapping)) args)))
 
-  (define (process input . opt-list)
-    (let* ((flags (apply options opt-list))
-           (mmiot (mkd-string input
-                              (string-length input)
-                              flags)))
-      (mkd-compile mmiot flags)   ; FIXME: check return code
-      (let* ((text-ptr (malloc size-of-pointer))
-             (size (mkd-document mmiot text-ptr))
-             (real-ptr (pointer-ref-c-pointer text-ptr 0)))
-        (extract-string real-ptr size))))
+  ; high level processing function
+  (define (convert input . opt-list)
+    (apply convert-document (string->document input) opt-list))
+
+  (define (convert-document mmiot . opt-list)
+    (mkd-compile mmiot (apply options opt-list))   ; FIXME: check return code
+    (let* ((text-ptr (malloc size-of-pointer))
+           (size (mkd-document mmiot text-ptr))
+           (real-ptr (pointer-ref-c-pointer text-ptr 0)))
+      (extract-string real-ptr size)))
+
+  ; XXX: Test if this function needs to accept an opt-list in order to apply the
+  ; supplied flags during HTML generation.
+  (define (string->document string)
+    (mkd-string string (string-length string) 0))
+
+  ; XXX: What happens if we fclose this before returning the document?
+  (define (path->document path)
+    (mkd-in (fopen path "r") 0))
 )
