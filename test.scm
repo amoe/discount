@@ -231,27 +231,5 @@
     (mkd-e-url mmiot link-userdata-cb)
     (mkd-e-data mmiot ptr)
     (mkd-generatehtml mmiot out-stream)))
-
-(test-true
-  (markdown:options 'no-links))
-
-(let ((alist (list->alist 'some-random-number 27
-                          'meaning-of-life 42)))
-  (test-equal 42 (lookup 'meaning-of-life alist))
-  (test-error error? (lookup 'meaning-of-liff alist)))
-
-(test-equal 8224
-            (markdown:options
-              'process-tag-text
-              'version-1-compat))
-
-(test-equal "<p>dude</p>"
-            (markdown:convert "dude"))
-
-(test-equal "<p><em>seriously</em>, dude</p>"
-            (markdown:convert "*seriously*, dude"))
-
-(test-true (pointer? (markdown:string->document *body*)))
-
 (test-results)
 
