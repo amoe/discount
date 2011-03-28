@@ -18,7 +18,7 @@
              (real-ptr (pointer-ref-c-pointer result 0))
              (str-result (extract-string real-ptr size)))
         (free result)
-        str-result)))
+        (values mmiot str-result))))
         
   ; FIXME: Optimize.
   (define (extract-string ptr size)
