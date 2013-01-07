@@ -58,13 +58,18 @@
 
   (fclose out-stream))
 
+
+; mkd_compile() returns 1 in the case of success, or 0 if the document is already
+; compiled.
 (let ((out-stream (tmpfile))
       (test-size (string-length *test-string*)))
   (let ((mmiot (mkd-string *test-string* test-size 0)))
     (test-true mmiot)
     (let ((ret (mkd-compile mmiot 0)))
-      (test-equal 0 ret))))    ; This test will always fail due to a bug in
-                               ; discount (or the docs).
+      (test-equal 1 ret)
+      ; This call should return 0 but currently will not.  This is an upstream bug.
+      ;(test-equal 0 (mkd-compile mmiot 0))
+      )))
 
 (define (allocate-string str)
   (let ((ptr (malloc (string-length str))))
