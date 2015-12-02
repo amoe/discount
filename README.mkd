@@ -1,0 +1,4 @@
+Binding for the Discount C library for the Mosh implementation of R6RS Scheme.
+
+Requires Derick Eddington's `xitomatl` utility library for support for
+keyword arguments.
