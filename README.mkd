@@ -8,3 +8,7 @@ Use `make install` to install the code.
 
 Use 'make patch_xitomatl' to patch your installed copy of Xitomatl
 which is expected under `/usr/local/share/scheme/r6rs/xitomatl`.
+
+Currently this code invades the top-level namespace, creating a
+`(discount)` library, not to mention (far more egregiously) a `(util)`
+library; this is gross and suboptimal.
