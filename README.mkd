@@ -2,4 +2,9 @@ Binding for the Discount C library for the Mosh implementation of R6RS Scheme.
 
 Requires Derick Eddington's
 [`xitomatl`](https://code.launchpad.net/~derick-eddington/scheme-libraries/xitomatl)
-utility library for support for keyword arguments.
+utility library for support for keyword arguments.  I've bundled a compatibility file to make this collection work with Mosh.
+
+Use `make install` to install the code.
+
+Use 'make patch_xitomatl' to patch your installed copy of Xitomatl
+which is expected under `/usr/local/share/scheme/r6rs/xitomatl`.

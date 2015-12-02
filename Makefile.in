@@ -1,3 +1,14 @@
 # Makefile.in
 
 CC = @CC@
+
+r6rs_lib_path = /usr/local/share/scheme/r6rs
+xitomatl_path = /usr/local/share/scheme/r6rs/xitomatl
+
+objects = discount.scm util.scm stdio.scm markdown.scm
+
+install:
+	cp  $(objects) $(r6rs_lib_path)
+
+patch_xitomatl:
+	cp common.mosh.sls $(xitomatl_path)
